@@ -1,0 +1,13 @@
+[Unit]
+Description=Telegram log watcher for x-ui
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/xui-log-watcher.sh
+Restart=always
+RestartSec=5
+StandardOutput=null
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
