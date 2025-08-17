@@ -1,23 +1,27 @@
 #!/bin/bash
+# install.sh — установка x-ui log watcher
+
 set -e
 
-GITHUB_RAW="https://raw.githubusercontent.com/middtho-dev/xui-log-watcher/main"
+SCRIPT_URL="https://raw.githubusercontent.com/middtho-dev/xui-log-watcher/main/xui-log-watcher.sh"
+SCRIPT_PATH="/usr/local/bin/xui-log-watcher.sh"
+SERVICE_PATH="/etc/systemd/system/xui-log-watcher.service"
 
-echo "[*] Скачиваем xui-log-watcher.sh..."
-curl -s -o /usr/local/bin/xui-log-watcher.sh "$GITHUB_RAW/xui-log-watcher.sh"
-chmod +x /usr/local/bin/xui-log-watcher.sh
+echo "[*] Скачиваем скрипт..."
+curl -s -o "$SCRIPT_PATH" "$SCRIPT_URL"
+chmod +x "$SCRIPT_PATH"
 
-echo "[*] Создаем systemd-сервис..."
-cat <<EOF > /etc/systemd/system/xui-log-watcher.service
+echo "[*] Создаём systemd-сервис..."
+cat <<EOF > "$SERVICE_PATH"
 [Unit]
 Description=X-UI Log Watcher
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/xui-log-watcher.sh
+ExecStart=$SCRIPT_PATH
 Restart=always
-User=root
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
@@ -25,7 +29,7 @@ EOF
 
 echo "[*] Перезагружаем systemd и включаем сервис..."
 systemctl daemon-reload
-systemctl enable xui-log-watcher.service
-systemctl start xui-log-watcher.service
+systemctl enable xui-log-watcher
+systemctl start xui-log-watcher
 
-echo "[*] Установка завершена. Сервис запущен и будет работать при старте системы."
+echo "[*] Установка завершена! Сервис xui-log-watcher запущен и будет работать после перезагрузки."
